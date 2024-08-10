@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"runtime"
 	"syscall"
+	"unsafe"
 )
 
 var psapi *syscall.Handle
@@ -31,4 +32,27 @@ func Unload() {
 	if kernel32 != nil {
 		syscall.FreeLibrary(*kernel32)
 	}
+}
+
+
+func openProcess(pid uint32, flag uint32) uintptr {
+	OpenProcess, _ := syscall.GetProcAddress(*kernel32, "OpenProcess")
+	var bInheritHandle = false
+	// https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess
+	hProcess, _, _ := syscall.SyscallN(
+		uintptr(OpenProcess),
+		uintptr(flag),
+		uintptr(unsafe.Pointer(&bInheritHandle)),
+		uintptr(pid),
+	)
+
+	return hProcess
+}
+func closeProcess(handle uintptr) uintptr {
+	CloseHandle, _ := syscall.GetProcAddress(*kernel32, "CloseHandle")
+	ret, _, _ := syscall.SyscallN(
+		uintptr(CloseHandle),
+		handle,
+	)
+	return ret
 }

@@ -9,18 +9,21 @@ import (
 )
 
 // https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory
-func readMemory(processHandle uintptr, address uint32, size uint32) ([]byte) {
+func readMemory(processHandle uintptr, address uintptr, size uint32) ([]byte) {
 	ReadProcessMemory, _ := syscall.GetProcAddress(*kernel32, "ReadProcessMemory")
 
-	buf := make([]byte, size)
+	buf := []byte{}
+	for i := uint32(0); i < size; i++ {
+		buf = append(buf, 0)
+	}
 	var nsize uint32
 
 	ret, _, callErr := syscall.SyscallN(
 		uintptr(ReadProcessMemory),
 		processHandle,
-		uintptr(address),
+		address,
 		uintptr(unsafe.Pointer(&buf[0])),
-		uintptr(len(buf)),
+		uintptr(size),
 		uintptr(unsafe.Pointer(&nsize)),
 	)
 
@@ -32,7 +35,7 @@ func readMemory(processHandle uintptr, address uint32, size uint32) ([]byte) {
 }
 
 // https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory
-func writeMemory(processHandle uintptr, address uint32, buf []byte) bool {
+func writeMemory(processHandle uintptr, address uintptr, buf []byte) bool {
 	WriteProcessMemory, _ := syscall.GetProcAddress(*kernel32, "WriteProcessMemory")
 
 	var nsize uint32
@@ -40,7 +43,7 @@ func writeMemory(processHandle uintptr, address uint32, buf []byte) bool {
 	ret, _, callErr := syscall.SyscallN(
 		uintptr(WriteProcessMemory),
 		processHandle,
-		uintptr(address),
+		address,
 		uintptr(unsafe.Pointer(&buf[0])),
 		uintptr(len(buf)),
 		uintptr(unsafe.Pointer(&nsize)),

@@ -11,89 +11,11 @@ import (
 )
 
 // 进程权限相关：https://docs.microsoft.com/en-us/windows/desktop/ProcThread/process-security-and-access-rights
-const (
-	DWORD_SIZE = 4				// 双字 4 字节
-	PROCESS_QUERY_INFORMATION = 0x0400
-	PROCESS_VM_OPERATION = 0x0008
-	PROCESS_VM_READ = 0x0010
-	PROCESS_VM_WRITE = 0x0020
-)
-
-type Process struct {
-	ProcessId uint32
-	ExecName string
-	Handle uintptr
-	ModAddrs []uint32
-	ModNames []string
-}
-func (p *Process) Close() {
-	if p.Handle == 0 {
-		return
-	}
-	CloseHandle, _ := syscall.GetProcAddress(*kernel32, "CloseHandle")
-	ret, _, _ := syscall.SyscallN(
-		uintptr(CloseHandle),
-		p.Handle,
-	)
-	if ret > 0 {
-		p.Handle = 0
-	}
-}
-func (p *Process) Inject() {
-	if p.ProcessId == 0 {
-		fmt.Printf("PID is zero\n")
-		return
-	}
-	if p.Handle != 0 {
-		fmt.Printf("Process has opened\n")
-		return
-	}
-
-	// 注入某个进程
-	OpenProcess, _ := syscall.GetProcAddress(*kernel32, "OpenProcess")
-
-	var bInheritHandle = false
-	hProcess, _, callErr := syscall.SyscallN(
-		uintptr(OpenProcess),
-		uintptr(PROCESS_QUERY_INFORMATION|PROCESS_VM_READ|PROCESS_VM_OPERATION|PROCESS_VM_WRITE),
-		uintptr(unsafe.Pointer(&bInheritHandle)),
-		uintptr(p.ProcessId),
-	)
-
-	if hProcess == 0 {
-		fmt.Printf("OpenProcess %d error %v\n", p.ProcessId, callErr)
-		return
-	}
-	p.Handle = hProcess
-}
-func (p *Process) ReadMemory (address uintptr, size uint32) {
-  // https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory
-	if p.Handle == 0 {
-		panic("Process has not opened")
-	}
-}
-func (p *Process) WriteMemory (address uintptr, data []byte) {
-	if p.Handle == 0 {
-		panic("Process has not opened")
-	}
-}
-
-// ================================================================================
 func GetProcessInfo (pid uint32) *Process {
 	// https://docs.microsoft.com/en-us/windows/desktop/psapi/enumerating-all-modules-for-a-process
-	OpenProcess, _ := syscall.GetProcAddress(*kernel32, "OpenProcess")
-	
-	var bInheritHandle = false
-	// https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess
-	hProcess, _, callErr := syscall.SyscallN(
-		uintptr(OpenProcess),
-		uintptr(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ),
-		uintptr(unsafe.Pointer(&bInheritHandle)),
-		uintptr(pid),
-	)
-
+	hProcess := openProcess(pid, PROCESS_QUERY_INFORMATION | PROCESS_VM_READ)
 	if hProcess == 0 {
-		fmt.Printf("OpenProcess %d error %v\n", pid, callErr)
+		fmt.Printf("OpenProcess %d error\n", pid)
 		return nil
 	}
 
@@ -148,16 +70,7 @@ func GetProcessInfo (pid uint32) *Process {
 	return &p
 }
 func getProcessName (pid uint32) *Process {
-	OpenProcess, _ := syscall.GetProcAddress(*kernel32, "OpenProcess")
-	var bInheritHandle = false
-	// https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess
-	hProcess, _, _ := syscall.SyscallN(
-		uintptr(OpenProcess),
-		uintptr(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ),
-		uintptr(unsafe.Pointer(&bInheritHandle)),
-		uintptr(pid),
-	)
-
+	hProcess := openProcess(pid, PROCESS_QUERY_INFORMATION | PROCESS_VM_READ)
 	if hProcess == 0 {
 		// fmt.Printf("OpenProcess %d error\n", pid)
 		return nil
