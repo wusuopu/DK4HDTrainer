@@ -44,7 +44,7 @@ var ALL_ORGANIZATION_NAMES [25]string = [25]string{
 type Organization struct {
 	Id uint16
 	Name string
-	MasterPortId uint16		`offset:"0x0A" size:"1"`		// 总部港口编号
+	MasterPortId uint8		`offset:"0x0A" size:"1"`		// 总部港口编号
 	MasterPortName string															// 总部港口名称
 	Money uint32		`offset:"0x0C" size:"4"`		// 势力资金
 	AreaValues [7]uint16	`offset:"0x10" size:"2"`		// 各海域势力值 北海、地中海、非洲、印度洋、东南亚、东亚、新大陆
@@ -67,7 +67,6 @@ func ListOrganization (t *Trainer) []*Organization {
 		o := &Organization{Id: uint16(i), Name: ALL_ORGANIZATION_NAMES[i]}
 		o.Parse((buf[(i * ORGANIZATION_SIZE):(i * ORGANIZATION_SIZE + ORGANIZATION_SIZE)]))
 		data = append(data, o)
-		fmt.Printf("势力：%d %s %s %d %v\n", o.Id, o.Name, o.MasterPortName, o.Money, o.AreaValues)
 	}
 
 	return data
@@ -84,7 +83,7 @@ func (o *Organization) Parse(buf []byte) {
 		return
 	}
 
-	o.MasterPortId = winapi.ByteToUInt16(buf[0x0A:0x0A+2])
+	o.MasterPortId = buf[0x0A]
 	if o.MasterPortId < MAX_ORGANIZATION_COUNT {
 		o.MasterPortName = ALL_PORT_CITIES[o.MasterPortId]
 	} else {
@@ -111,4 +110,8 @@ func (o *Organization) GetOrganizationById (t *Trainer, id uint64) *Organization
 	o.Parse((buf))
 
 	return o
+}
+
+func ( o *Organization) String () string {
+  return fmt.Sprintf("势力:%d %s; 总部:%s; 金币:%d %v", o.Id, o.Name, o.MasterPortName, o.Money, o.AreaValues)
 }

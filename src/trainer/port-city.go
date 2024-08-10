@@ -194,7 +194,7 @@ func (p *PortCity) GetPortCityById (t *Trainer, id uint64) *PortCity {
 
 func (p *PortCity) String() string {
 		return fmt.Sprintf(
-			"港口：%d %s 发展：%d 武装：%d； 占有率：%s %d, %s %d, %s %d",
+			"港口:%d %s; 发展:%d 武装:%d; 占有率:%s %d, %s %d, %s %d",
 			p.Id, p.Name, p.DevelopmentValue, p.ArmamentValue,
 			p.OrgName1, p.Possession1,
 			p.OrgName2, p.Possession2,

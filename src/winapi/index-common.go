@@ -9,7 +9,11 @@ import (
 	"golang.org/x/text/transform"
 )
 
-func ByteToString(buf []byte, coding string) (string, error) {
+func ByteToString(data []byte, coding string) (string, error) {
+	buf := bytes.TrimRightFunc(data, func(r rune) bool {
+		// 去年结尾的 \0 字符
+		return r == 0
+	})
 	if len(buf) == 0 {
 		return "", nil
 	}
