@@ -3,6 +3,7 @@
 package winapi
 
 import (
+	"dk4/config"
 	"fmt"
 	"path"
 	"strings"
@@ -38,7 +39,9 @@ func GetProcessInfo (pid uint32) *Process {
 		uintptr(unsafe.Pointer(&cbNeeded)),
 	)
 	if ret == 0 {
-		fmt.Printf("EnumProcessModules %d error %v\n", pid, callErr)
+		if config.DEBUG {
+			fmt.Printf("EnumProcessModules %d error %v\n", pid, callErr)
+		}
 		return nil
 	}
 
@@ -48,7 +51,7 @@ func GetProcessInfo (pid uint32) *Process {
 		p.ModAddrs = append(p.ModAddrs, hMods[i])
 
 		var lpBaseName [100]byte
-		ret, _, _ = syscall.SyscallN(
+		ret, _, callErr = syscall.SyscallN(
 			uintptr(GetModuleBaseNameA),
 			hProcess,
 			uintptr(hMods[i]),
@@ -57,13 +60,17 @@ func GetProcessInfo (pid uint32) *Process {
 		)
 
 		if ret == 0 {
-			fmt.Printf("GetModuleBaseNameA %d %d error %v\n", pid, i, callErr)
+			if config.DEBUG {
+				fmt.Printf("GetModuleBaseNameA %d %d error %v\n", pid, i, callErr)
+			}
 			p.ModNames = append(p.ModNames, "")
 			continue
 		}
 
 		name := string(lpBaseName[:ret])
-		fmt.Printf("pid %d mod %d %x name %s\n", pid, i, hMods[i], name)
+		if config.DEBUG {
+			fmt.Printf("pid %d mod %d %x name %s\n", pid, i, hMods[i], name)
+		}
 		p.ModNames = append(p.ModNames, name)
 	}
 

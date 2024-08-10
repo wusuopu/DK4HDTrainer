@@ -9,6 +9,12 @@ const (
 	MAX_SHIP_COUNT = 207
   SHIP_SIZE = 0x80
 	SHIP_OFFSET = 0x42B8348
+
+	SHIP_GUN_TYPE_01 = 0
+	SHIP_GUN_TYPE_02 = 1
+	SHIP_GUN_TYPE_03 = 2
+	SHIP_GUN_TYPE_04 = 4
+	SHIP_GUN_TYPE_05 = 5
 )
 
 type Ship struct {
@@ -63,7 +69,7 @@ func (s *Ship) GetShipById (t *Trainer, id uint64) *Ship {
 	}
 
 	buf := t.Process.ReadMemory(
-		uintptr(t.baseAddr + id * SHIP_OFFSET),
+		uintptr(t.baseAddr + SHIP_OFFSET + SHIP_SIZE * id),
 		SHIP_SIZE,
 	)
 
@@ -90,6 +96,15 @@ func (s *Ship) LockWaterAndFood(t *Trainer) {
 	s.Food = 200
 
 	addr := t.baseAddr + SHIP_OFFSET + uint64(s.Id) * SHIP_SIZE
-	t.Process.WriteByte(uintptr(addr + 0x46), byte(s.Water))
-	t.Process.WriteByte(uintptr(addr + 0x48), byte(s.Food))
+	t.Process.WriteInt16(uintptr(addr + 0x46), int16(s.Water))
+	t.Process.WriteInt16(uintptr(addr + 0x48), int16(s.Food))
+}
+func (s *Ship) SetGun(t *Trainer, gun uint8) {
+	if !s.Valid{
+		return
+	}
+	s.Gun = gun
+
+	addr := t.baseAddr + SHIP_OFFSET + uint64(s.Id) * SHIP_SIZE
+	t.Process.WriteByte(uintptr(addr + 0x52), s.Gun)
 }

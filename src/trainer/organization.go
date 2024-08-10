@@ -101,7 +101,7 @@ func (o *Organization) GetOrganizationById (t *Trainer, id uint64) *Organization
 	}
 
 	buf := t.Process.ReadMemory(
-		uintptr(t.baseAddr + id * ORGANIZATION_OFFSET),
+		uintptr(t.baseAddr + ORGANIZATION_OFFSET + ORGANIZATION_SIZE * id),
 		ORGANIZATION_SIZE,
 	)
 

@@ -13,7 +13,6 @@ var psapi *syscall.Handle
 var kernel32 *syscall.Handle
 
 func init() {
-	fmt.Println("init win-api")
 	if runtime.GOOS != "windows" {
 		fmt.Println("current is not windows")
 		return

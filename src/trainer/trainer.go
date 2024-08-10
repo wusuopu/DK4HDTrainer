@@ -13,6 +13,10 @@ type Trainer struct {
 }
 
 func (t *Trainer) Init() {
+	if t.Process != nil && t.Process.Handle != 0 {
+		t.Process.Close()
+	}
+
 	t.Process = nil
 	t.baseAddr = 0
 	t.Version = ""
@@ -27,6 +31,7 @@ func (t *Trainer) Init() {
 		}
 	}
 	if t.Process == nil {
+		fmt.Println("游戏还未启动")
 		return
 	}
 

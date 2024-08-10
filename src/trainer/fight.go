@@ -61,8 +61,8 @@ func LockAllFight(t *Trainer) {
 func (f *Fight) Parse (buf []byte) {
 	f.HP = winapi.ByteToUInt16(buf[0x26:0x26+2])
 	f.Mariner = winapi.ByteToUInt16(buf[0x28:0x28+2])
-	f.Valid = buf[0x2e] != 0			// 船只有效
+	f.Valid = buf[0x21] != 0			// 船只有效
 }
 func (f *Fight) String() string {
-	return fmt.Sprintf("Id: %d, 耐久: %d, 水手: %d", f.Id, f.HP, f.Mariner)
+	return fmt.Sprintf("Id: %d, 耐久: %d, 水手: %d, 有效: %t\n", f.Id, f.HP, f.Mariner, f.Valid)
 }

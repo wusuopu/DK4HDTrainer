@@ -79,7 +79,7 @@ var ALL_ARMADA_NAMES [63]string = [63]string{
 type Armada struct {
   Id uint16
 	Name string
-	Orgid uint8						`offset:"0x10" size:"1"`			// 所属势力
+	OrgId uint8						`offset:"0x10" size:"1"`			// 所属势力
 	OrgName string
 	PortId uint8		`offset:"0x0A" size:"1"`		// 根据地港口编号
 	PortName string															// 根据地港口名称
@@ -120,8 +120,8 @@ func (a *Armada) Parse(buf []byte) {
 	if len(buf) != ARMADA_SIZE {
 		return
 	}
-	a.Orgid = buf[0x10]
-	a.OrgName = getOrganizationName(a.Orgid)
+	a.OrgId = buf[0x10]
+	a.OrgName = getOrganizationName(a.OrgId)
 	a.PortId = buf[0x98]
 	a.PortName = getPortCityName(a.PortId)
 	a.Fatigue = buf[0x71]
@@ -135,7 +135,7 @@ func (a *Armada) GetArmadaById (t *Trainer, id uint64) *Armada {
 	}
 
 	buf := t.Process.ReadMemory(
-		uintptr(t.baseAddr + id * ARMADA_OFFSET),
+		uintptr(t.baseAddr + ARMADA_OFFSET + ARMADA_SIZE * id),
 		ARMADA_SIZE,
 	)
 

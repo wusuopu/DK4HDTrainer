@@ -10,6 +10,8 @@ const (
 	MAX_PORT_CITY_COUNT = 97
 	PORT_CITY_SIZE = 0x78
 	PORT_CITY_OFFSET = 0x42B3E88
+	FEED_PORT_COUNT = 24
+	FEED_PORT_OFFSET = 0x42C1A80		// 补给港
 )
 var ALL_PORT_CITIES [97]string = [97]string{
 	"伦敦",					// 0
@@ -155,6 +157,36 @@ func getPortCityName (id uint8) string {
 	return ""
 }
 
+func ListFeedPortStatus (t *Trainer) [24]bool {
+	// 24个补给港，使用3个Byte共24bit记录是否已发现
+	// 依次为： 
+	// 衣奴维克、 夏威夷、 里约热内卢、 邱吉尔、 法耳巴拉索、 诺母、 鳕角、 蒙特维多
+	// 海克拉、 卡里比布、 法儿维尔、 大溪地、 狄克逊、 速亚群岛、 圣塔巴巴拉、 那维克
+	// 雷巴求、 喀劳、 北海道、 帕斯、 关岛、 季克西、 科尔夫、 汪加努
+
+  data := [24]bool{}
+
+	buf := t.Process.ReadMemory(
+		uintptr(t.baseAddr + FEED_PORT_OFFSET),
+		3,
+	)
+	for i := 0; i < FEED_PORT_COUNT; i++ {
+		index := i / 8
+		value := buf[index]
+		value = value >> (i % 8)
+		data[i] = (value & 0x01) > 0
+	}
+	return data
+}
+func ToggleOnAllFeedPort (t *Trainer) {
+	value := []byte{0xff, 0xff, 0xff}
+	t.Process.WriteMemory(
+		uintptr(t.baseAddr + FEED_PORT_OFFSET),
+		value,
+	)
+}
+
+// ==============================
 func (p *PortCity) Parse (buf []byte) {
 	if len(buf) != PORT_CITY_SIZE {
 		return
@@ -181,7 +213,7 @@ func (p *PortCity) GetPortCityById (t *Trainer, id uint64) *PortCity {
 	}
 
 	buf := t.Process.ReadMemory(
-		uintptr(t.baseAddr + id * PORT_CITY_OFFSET),
+		uintptr(t.baseAddr + PORT_CITY_OFFSET + PORT_CITY_SIZE * id),
 		PORT_CITY_SIZE,
 	)
 
