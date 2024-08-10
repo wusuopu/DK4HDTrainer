@@ -31,7 +31,7 @@ type Ship struct {
 
 func ListShip (t *Trainer) []*Ship {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(
@@ -65,7 +65,7 @@ func (s *Ship) Parse(buf []byte) {
 
 func (s *Ship) GetShipById (t *Trainer, id uint64) *Ship {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(

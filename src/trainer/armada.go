@@ -90,7 +90,7 @@ type Armada struct {
 
 func ListArmada(t *Trainer) []*Armada {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(
@@ -131,7 +131,7 @@ func (a *Armada) Parse(buf []byte) {
 
 func (a *Armada) GetArmadaById (t *Trainer, id uint64) *Armada {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(

@@ -53,7 +53,7 @@ type Organization struct {
 // 获取所有势力信息
 func ListOrganization (t *Trainer) []*Organization {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(
@@ -97,7 +97,7 @@ func (o *Organization) Parse(buf []byte) {
 
 func (o *Organization) GetOrganizationById (t *Trainer, id uint64) *Organization {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(

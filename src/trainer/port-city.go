@@ -132,7 +132,7 @@ type PortCity struct {
 
 func ListPortCity (t *Trainer) []*PortCity {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(
@@ -209,7 +209,7 @@ func (p *PortCity) Parse (buf []byte) {
 
 func (p *PortCity) GetPortCityById (t *Trainer, id uint64) *PortCity {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(

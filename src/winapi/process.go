@@ -128,7 +128,7 @@ func ListProcess() []*Process {
 	)
 
 	if ret != 1 {
-		panic(fmt.Sprintf("ListProcess error: %v", callErr))
+		panic(fmt.Errorf("ListProcess error: %v", callErr))
 	}
 
 	num := int(lpcbNeeded / uint32(DWORD_SIZE))

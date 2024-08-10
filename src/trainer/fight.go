@@ -22,7 +22,7 @@ type Fight struct {
 
 func ListFight(t *Trainer) []*Fight {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(

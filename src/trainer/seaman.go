@@ -130,7 +130,7 @@ type Seaman struct {
 
 func ListSeaman (t *Trainer) []*Seaman {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(
@@ -194,7 +194,7 @@ func (s *Seaman) Parse(buf []byte) {
 
 func (s *Seaman) GetSeamanById (t *Trainer, id uint64) *Seaman {
 	if t.Process == nil {
-		panic("进程不存在")
+		panic(fmt.Errorf("进程不存在"))
 	}
 
 	buf := t.Process.ReadMemory(
@@ -214,4 +214,19 @@ func (s *Seaman) String () string{
 		"海员:%d %s; 势力:%s; 六维:%v; 经验：%v",
 		s.Id, s.Name, s.OrgName, s.Metrics, s.Exps,
 	)
+}
+
+// 等级、属性加满
+func (s *Seaman) UpToMaxLevel(t *Trainer) {
+	s.Metrics = [6]uint8{100, 100, 100, 100, 100, 100}
+	value := []byte{100, 100, 100, 100, 100, 100}
+
+	addr := t.baseAddr + SEAMAN_OFFSET + uint64(s.Id) * SEAMAN_SIZE
+	t.Process.WriteMemory(
+		uintptr(addr + 0x0F),
+		value,
+	)
+	s.Exps = [2]uint32{0x0493e0, 0x0493e0}
+	t.Process.WriteInt32(uintptr(addr + 0x18), 0x0493e0)
+	t.Process.WriteInt32(uintptr(addr + 0x1C), 0x0493e0)
 }

@@ -28,7 +28,7 @@ func readMemory(processHandle uintptr, address uintptr, size uint32) ([]byte) {
 	)
 
 	if ret == 0 {
-		panic(fmt.Sprintf("ReadProcessMemory failed: %v", callErr))
+		panic(fmt.Errorf("ReadProcessMemory failed: %v", callErr))
 	}
 
 	return buf[:nsize]
@@ -50,7 +50,7 @@ func writeMemory(processHandle uintptr, address uintptr, buf []byte) bool {
 	)
 
 	if ret == 0 {
-		panic(fmt.Sprintf("WriteProcessMemory failed: %v", callErr))
+		panic(fmt.Errorf("WriteProcessMemory failed: %v", callErr))
 	}
 
 	return true

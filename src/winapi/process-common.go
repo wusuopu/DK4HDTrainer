@@ -54,7 +54,7 @@ func (p *Process) Inject() error {
 func (p *Process) ReadMemory (address uintptr, size uint32) []byte {
   // https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory
 	if p.Handle == 0 {
-		panic("Process has not opened")
+		panic(fmt.Errorf("Process has not opened"))
 	}
 
 	data := readMemory(p.Handle, address, size)
@@ -84,7 +84,7 @@ func (p *Process) ReadString (address uintptr, size uint32, coding string) strin
 
 func (p *Process) WriteMemory (address uintptr, data []byte) bool {
 	if p.Handle == 0 {
-		panic("Process has not opened")
+		panic(fmt.Errorf("Process has not opened"))
 	}
 	return writeMemory(p.Handle, address, data)
 }
