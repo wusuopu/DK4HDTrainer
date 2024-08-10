@@ -147,7 +147,10 @@ func ListSeaman (t *Trainer) []*Seaman {
 	}
 
 	o := GetCurrentLeadSeaman(t)
-	data[o.LeadId] = o
+	if o.Exps[0] > 0 {
+		// 经验为空表示游戏还未开始
+		data[o.LeadId] = o
+	}
 	return data
 }
 
@@ -164,8 +167,12 @@ func GetCurrentLeadSeaman (t *Trainer) *Seaman {
 	name1 := t.Process.ReadString(uintptr(t.baseAddr + SEAMAN_OFFSET + CURRENT_LEAD_SEAMAN_NUM * SEAMAN_SIZE + 0x30), 17, "gbk")
 	name2 := t.Process.ReadString(uintptr(t.baseAddr + SEAMAN_OFFSET + CURRENT_LEAD_SEAMAN_NUM * SEAMAN_SIZE + 0x41), 17, "gbk")
 	name3 := t.Process.ReadString(uintptr(t.baseAddr + SEAMAN_OFFSET + CURRENT_LEAD_SEAMAN_NUM * SEAMAN_SIZE + 0x52), 17, "gbk")
-	name := fmt.Sprintf("%s•%s•%s", name1, name2, name3)
-	s.Name = name
+	if name1 != "" && name2 != "" && name3 != "" {
+		name := fmt.Sprintf("%s•%s•%s", name1, name2, name3)
+		s.Name = name
+	} else {
+		s.Name = ""
+	}
 	return s
 }
 

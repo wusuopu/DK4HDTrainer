@@ -115,3 +115,11 @@ func (o *Organization) GetOrganizationById (t *Trainer, id uint64) *Organization
 func ( o *Organization) String () string {
   return fmt.Sprintf("势力:%d %s; 总部:%s; 金币:%d %v", o.Id, o.Name, o.MasterPortName, o.Money, o.AreaValues)
 }
+
+// 设置金钱
+func (o *Organization) SetMoney(t *Trainer, value uint32) {
+	o.Money = value
+
+	addr := t.baseAddr + ORGANIZATION_OFFSET + uint64(o.Id) * ORGANIZATION_SIZE
+	t.Process.WriteInt32(uintptr(addr + 0x0C), int32(o.Money))
+}

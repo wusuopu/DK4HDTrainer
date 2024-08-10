@@ -2,6 +2,7 @@ package trainer
 
 import "fmt"
 
+// 舰队信息
 const (
 	MAX_ARMADA_COUNT = 69
 	ARMADA_SIZE = 0xC8
@@ -151,4 +152,12 @@ func (a *Armada) String() string {
 		a.Id, a.Name, a.OrgName, a.PortName, a.Fatigue,
 		formatLatitude(a.Latitude), formatLongitude(a.Longitude),
 	)
+}
+
+// 清空疲劳
+func (a *Armada) ResetFatigue(t *Trainer) {
+	a.Fatigue = 0
+
+	addr := t.baseAddr + ARMADA_OFFSET + uint64(a.Id) * ARMADA_SIZE
+	t.Process.WriteByte(uintptr(addr + 0x71), a.Fatigue)
 }
