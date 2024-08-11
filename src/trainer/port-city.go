@@ -151,7 +151,7 @@ func ListPortCity (t *Trainer) []*PortCity {
 	return data
 }
 func getPortCityName (id uint8) string {
-	if id < MAX_ORGANIZATION_COUNT {
+	if id < MAX_PORT_CITY_COUNT {
 		return ALL_PORT_CITIES[id]
 	}
 	return ""

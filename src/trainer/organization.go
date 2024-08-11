@@ -84,11 +84,7 @@ func (o *Organization) Parse(buf []byte) {
 	}
 
 	o.MasterPortId = buf[0x0A]
-	if o.MasterPortId < MAX_ORGANIZATION_COUNT {
-		o.MasterPortName = ALL_PORT_CITIES[o.MasterPortId]
-	} else {
-		o.MasterPortName = ""
-	}
+	o.MasterPortName = getPortCityName(o.MasterPortId)
 	o.Money = winapi.ByteToUInt32(buf[0x0C:0x0C+4])
 	for i := 0; i < 7; i++ {
 		o.AreaValues[i] = winapi.ByteToUInt16(buf[0x10+i*2:0x10+i*2+2])

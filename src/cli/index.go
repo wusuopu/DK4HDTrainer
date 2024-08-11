@@ -20,8 +20,9 @@ var lockShipFlag bool = false
 
 
 func PrintHelp() {
-	fmt.Printf("输入相应的指令(版本%s)：\n", config.VERSION)
-	fmt.Println("\t[r] 刷新游戏状态")
+	fmt.Printf("大航海时代4HD威力加强版修改器(当前版本%s)\n下载最新版本： https://github.com/wusuopu/DK4HDTrainer/releases \n", config.VERSION)
+	fmt.Println("输入相应的指令")
+	fmt.Println("\t[r] 刷新游戏状态(每次重新开始游戏之后需要刷新一下)")
 	fmt.Println("\t[q] 退出")
 	fmt.Println("\t[h] 打印此帮助信息")
 	fmt.Println("\t[p] 打印游戏信息")
@@ -29,7 +30,7 @@ func PrintHelp() {
 	fmt.Println("\t[1] 海员增强(属性加满、等级加满)")
 	fmt.Println("\t[2] 无限粮食")
 	fmt.Println("\t[3] 不会疲劳")
-	fmt.Println("\t[4] 增强武装(锁定战斗船只耐久值和水手数量，船只大炮升级到最高)")
+	fmt.Println("\t[4] 武装增强(锁定战斗船只耐久值和水手数量，船只大炮升级到最高)")
 	fmt.Println("\t[5] 发现所有补给港")
 }
 func refresh() {
@@ -94,6 +95,7 @@ func addMoney() {
 		fmt.Println("游戏还未开始")
 		return
 	}
+	currentOrg.GetOrganizationById(t, uint64(currentOrg.Id))
 	currentOrg.SetMoney(t, currentOrg.Money + 10000)
 	fmt.Println("当前势力资金: ", currentOrg.Money)
 }
