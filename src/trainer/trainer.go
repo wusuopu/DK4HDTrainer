@@ -13,13 +13,7 @@ type Trainer struct {
 }
 
 func (t *Trainer) Init() {
-	if t.Process != nil && t.Process.Handle != 0 {
-		t.Process.Close()
-	}
-
-	t.Process = nil
-	t.baseAddr = 0
-	t.Version = ""
+	t.Reset()
 
   processes := winapi.ListProcess()
 
@@ -43,4 +37,13 @@ func (t *Trainer) Init() {
 
 	t.baseAddr = uint64(p.ModAddrs[0]) + (uint64(p.ModAddrs[1]) << 32)
 	fmt.Printf("进程 %d; 基址： %x\n", t.Process.ProcessId, t.baseAddr)
+}
+func (t *Trainer) Reset() {
+	if t.Process != nil && t.Process.Handle != 0 {
+		t.Process.Close()
+	}
+
+	t.Process = nil
+	t.baseAddr = 0
+	t.Version = ""
 }

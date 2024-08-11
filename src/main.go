@@ -1,15 +1,16 @@
 package main
 
 import (
-	"dk4/trainer"
+	"dk4/ui"
 	"dk4/winapi"
+	"embed"
 )
+
+//go:embed views/*
+var embededFiles embed.FS
 
 func main() {
   defer winapi.Unload()
 
-  trainer := trainer.Trainer{}
-  trainer.Init()
-
-  // ui.Run()
+  ui.Run(embededFiles)
 }

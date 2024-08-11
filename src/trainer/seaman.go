@@ -123,7 +123,7 @@ type Seaman struct {
 	Name string
 	OrgId uint8					`offset:"0x0C" size:"1"`			// 所属势力
 	OrgName string
-	Metrics [6]uint8		`offset:"0x0F" size:"1"`			// 6个属性
+	Metrics [6]uint8		`offset:"0x0F" size:"1"`			// 6个属性: 体力、运气、智力、魅力、敏捷、精神
 	Exps [2]uint32			`offset:"0x18" size:"4"`			// 2个经验值 最大值 30W(0x0493e0)
 	LeadId uint8				`offset:"0x28" size:"1"`			// 当前提督海员编号
 }

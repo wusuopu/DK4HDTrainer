@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/jchv/go-webview2 v0.0.0-20221223143126-dc24628cff85
+	github.com/valyala/fastjson v1.6.4
 	golang.org/x/text v0.17.0
 )
 

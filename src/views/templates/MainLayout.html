@@ -1,0 +1,48 @@
+<div class="mb-1">
+  <h1 class="mb-3">大航海时代4HD威力加强版修改器({{ $store.state.game.version }})，下载最新版程序： https://github.com/wusuopu/DK4HDTrainer/releases</h1>
+  <div class="flex items-center mb-2">
+    <div class="font-bold">
+      <p v-if="!$store.state.game.processId">游戏还未启动</p>
+      <p v-else>游戏信息 进程： {{ $store.state.game.processId }} ；版本：{{ language }}</p>
+    </div>
+    <div class="flex items-center ml-4">
+      玩家信息 
+      <p v-if="!$store.state.leadSeaman" class="ml-1">游戏还未开始</p>
+      <p v-else class="ml-1">玩家名：{{ $store.state.leadSeaman.Name }} ；势力：{{ $store.state.leadSeaman.OrgName }} ；金钱：{{ $store.state.currentOrg.Money }}</p>
+    </div>
+  </div>
+  <div class="flex mb-2 gap-2">
+    <el-button type="primary" @click="addMoney">金钱加10000</el-button>
+
+    <el-tooltip
+      class="box-item"
+      effect="dark"
+      content="自己海员的属性加满、等级加满"
+      placement="top-start"
+    >
+      <el-button type="success" @click="enhanceSeaman">海员增强</el-button>
+    </el-tooltip>
+
+    <el-tooltip
+      class="box-item"
+      effect="dark"
+      content="自己船只大炮升级到最高"
+      placement="top-start"
+    >
+      <el-button type="info" @click="enhanceShip">武装增强</el-button>
+    </el-tooltip>
+
+    <el-button type="warning" @click="turnOnAllPorts">发现所有补给港</el-button>
+
+    <div class="ml-3"> 无限水粮： <el-switch v-model="lockFoodFlag" @change="toggleLockFlag('food', $event)" /> </div>
+    <div class="ml-3"> 不会疲劳： <el-switch v-model="lockFatigueFlag" @change="toggleLockFlag('fatigue', $event)" /> </div>
+    <div class="ml-3"> 锁定船只耐久： <el-switch v-model="lockShipFlag" @change="toggleLockFlag('ship', $event)" /> </div>
+  </div>
+
+
+  <el-menu v-if="$store.state.leadSeaman" :default-active="menuIndex" mode="horizontal" :ellipsis="false" @select="handleMenuSelect">
+    <el-menu-item v-for="(item, index) in menus" :index="item.path" :key="index" class="flex-1 font-bold">{{ item.name }}</el-menu-item>
+  </el-menu>
+</div>
+
+<router-view />

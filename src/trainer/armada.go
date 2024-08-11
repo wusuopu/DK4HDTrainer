@@ -79,9 +79,9 @@ var ALL_ARMADA_NAMES [63]string = [63]string{
 type Armada struct {
   Id uint16
 	Name string
-	OrgId uint8						`offset:"0x10" size:"1"`			// 所属势力
+	OrgId uint8						`offset:"0x10" size:"1"`			// 所属势力 ????
 	OrgName string
-	PortId uint8		`offset:"0x0A" size:"1"`		// 根据地港口编号
+	PortId uint8		`offset:"0x70" size:"1"`		// 出发港口编号
 	PortName string															// 根据地港口名称
 	Fatigue uint8				`offset:"0x71" size:"1"`			// 疲劳
 	Longitude float32		`offset:"0x68" size:"2"`			// 经度
@@ -122,7 +122,7 @@ func (a *Armada) Parse(buf []byte) {
 	}
 	a.OrgId = buf[0x10]
 	a.OrgName = getOrganizationName(a.OrgId)
-	a.PortId = buf[0x98]
+	a.PortId = buf[0x70]
 	a.PortName = getPortCityName(a.PortId)
 	a.Fatigue = buf[0x71]
 	a.Longitude = parseLongitude(buf[0x69], buf[0x68])
@@ -148,7 +148,7 @@ func (a *Armada) GetArmadaById (t *Trainer, id uint64) *Armada {
 
 func (a *Armada) String() string {
 	return fmt.Sprintf(
-		"舰队:%d %s; 势力:%s; 根据地港口:%s; 疲劳:%d; 坐标：%s %s",
+		"舰队:%d %s; 势力:%s; 出发港口:%s; 疲劳:%d; 坐标：%s %s",
 		a.Id, a.Name, a.OrgName, a.PortName, a.Fatigue,
 		formatLatitude(a.Latitude), formatLongitude(a.Longitude),
 	)
