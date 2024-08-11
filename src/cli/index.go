@@ -30,8 +30,9 @@ func PrintHelp() {
 	fmt.Println("\t[1] 海员增强(属性加满、等级加满)")
 	fmt.Println("\t[2] 无限粮食")
 	fmt.Println("\t[3] 不会疲劳")
-	fmt.Println("\t[4] 武装增强(锁定战斗船只耐久值和水手数量，船只大炮升级到最高)")
-	fmt.Println("\t[5] 发现所有补给港")
+	fmt.Println("\t[4] 锁定战斗船只耐久值和水手数量")
+	fmt.Println("\t[5] 武装增强(船只大炮升级到最高)")
+	fmt.Println("\t[6] 发现所有补给港")
 }
 func refresh() {
 	t.Init()
@@ -136,7 +137,9 @@ func lockShip() {
 	} else {
 		fmt.Println("战斗船只锁定已关闭")
 	}
+}
 
+func enhanceShip() {
 	if currentOrg == nil {
 		fmt.Println("游戏还未开始")
 		return
@@ -168,7 +171,8 @@ var Actions = map[string]ActionFunc{
 	"2": lockFood,
 	"3": lockFatigue,
 	"4": lockShip,
-	"5": turnOnAllPorts,
+	"5": enhanceShip,
+	"6": turnOnAllPorts,
 }
 
 // 定时修改游戏数据
