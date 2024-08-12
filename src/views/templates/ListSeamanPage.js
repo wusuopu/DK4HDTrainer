@@ -3,6 +3,7 @@
   },
   data() {
     return {
+      loaded: false,
       list: [],
     }
   },
@@ -20,5 +21,6 @@
     });
     console.log(data);
     this.list = data;
+    this.loaded = true
   },
 }

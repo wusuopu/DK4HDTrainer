@@ -3,6 +3,7 @@
   },
   data() {
     return {
+      loaded: false,
       list: [],
     }
   },
@@ -17,7 +18,8 @@
         item.TotalAreaValue += v;
       });
     });
-    this.list = data
     console.log(data)
+    this.list = data
+    this.loaded = true
   },
 }

@@ -3,6 +3,7 @@
   },
   data() {
     return {
+      loaded: false,
       list: [],
     }
   },
@@ -29,9 +30,13 @@
         }
         item.Latitude = `${pos}${Math.abs(item.Latitude.toFixed(2))}`
       }
+      if (!item.Name && item.LeadSeamanName) {
+        item.Name = `${item.LeadSeamanName.split('·')[0]}舰队`
+      }
     });
     console.log(data);
     data = _.filter(data, "Name")
     this.list = data;
+    this.loaded = true
   },
 }

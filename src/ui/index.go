@@ -93,7 +93,7 @@ func _lockValueTick() {
 	if lockFatigueFlag {
 		armadas := trainer.ListArmada(t)
 		for _, v := range armadas {
-			if uint16(v.OrgId) == currentOrg.Id {
+			if uint16(v.LeadSeamanId) == uint16(leadSeaman.LeadId) {
 				v.ResetFatigue(t)
 			}
 		}

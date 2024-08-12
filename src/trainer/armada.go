@@ -79,7 +79,9 @@ var ALL_ARMADA_NAMES [63]string = [63]string{
 type Armada struct {
   Id uint16
 	Name string
-	OrgId uint8						`offset:"0x10" size:"1"`			// 所属势力 ????
+	LeadSeamanId uint8						`offset:"0x10" size:"1"`			// 提督海员编号
+	LeadSeamanName string
+	OrgId uint8
 	OrgName string
 	PortId uint8		`offset:"0x70" size:"1"`		// 出发港口编号
 	PortName string															// 根据地港口名称
@@ -102,7 +104,7 @@ func ListArmada(t *Trainer) []*Armada {
 
 	for i := 0; i < MAX_ARMADA_COUNT; i++ {
 		o := &Armada{Id: uint16(i), Name: getArmadaName(uint8(i))}
-		o.Parse((buf[(i * ARMADA_SIZE):(i * ARMADA_SIZE + ARMADA_SIZE)]))
+		o.Parse((buf[(i * ARMADA_SIZE):(i * ARMADA_SIZE + ARMADA_SIZE)]), t)
 		data = append(data, o)
 	}
 
@@ -116,17 +118,22 @@ func getArmadaName(id uint8) string {
 	return ""
 }
 
-func (a *Armada) Parse(buf []byte) {
+func (a *Armada) Parse(buf []byte, t *Trainer) {
 	if len(buf) != ARMADA_SIZE {
 		return
 	}
-	a.OrgId = buf[0x10]
-	a.OrgName = getOrganizationName(a.OrgId)
+	a.LeadSeamanId = buf[0x10]
+	a.LeadSeamanName = getSeamanName(a.LeadSeamanId)
 	a.PortId = buf[0x70]
 	a.PortName = getPortCityName(a.PortId)
 	a.Fatigue = buf[0x71]
 	a.Longitude = parseLongitude(buf[0x69], buf[0x68])
 	a.Latitude = parseLatitude(buf[0x6D], buf[0x6C])
+
+	seaman := Seaman{Id: uint16(a.LeadSeamanId)}
+	seaman.GetSeamanById(t, uint64(a.LeadSeamanId))
+	a.OrgId = seaman.OrgId
+	a.OrgName = seaman.OrgName
 }
 
 func (a *Armada) GetArmadaById (t *Trainer, id uint64) *Armada {
@@ -141,15 +148,15 @@ func (a *Armada) GetArmadaById (t *Trainer, id uint64) *Armada {
 
 	a.Id = uint16(id)
 	a.Name = getArmadaName(uint8(id))
-	a.Parse((buf))
+	a.Parse((buf), t)
 
 	return a
 }
 
 func (a *Armada) String() string {
 	return fmt.Sprintf(
-		"舰队:%d %s; 势力:%s; 出发港口:%s; 疲劳:%d; 坐标：%s %s",
-		a.Id, a.Name, a.OrgName, a.PortName, a.Fatigue,
+		"舰队:%d %s; 提督:%s; 出发港口:%s; 疲劳:%d; 坐标：%s %s",
+		a.Id, a.Name, a.LeadSeamanName, a.PortName, a.Fatigue,
 		formatLatitude(a.Latitude), formatLongitude(a.Longitude),
 	)
 }
