@@ -11,7 +11,8 @@
       <p v-else class="ml-1">玩家名：{{ $store.state.leadSeaman.Name }} ；势力：{{ $store.state.leadSeaman.OrgName }} ；金钱：{{ $store.state.currentOrg.Money }}</p>
     </div>
   </div>
-  <div class="flex mb-2 gap-2">
+
+  <div v-if="$store.state.leadSeaman" class="flex mb-2 gap-2">
     <el-button type="primary" @click="addMoney">金钱加10000</el-button>
 
     <el-tooltip
@@ -45,4 +46,6 @@
   </el-menu>
 </div>
 
-<router-view />
+<div v-show="$store.state.leadSeaman">
+  <router-view />
+</div>

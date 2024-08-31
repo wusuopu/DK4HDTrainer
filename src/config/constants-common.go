@@ -1,3 +1,3 @@
 package config
 
-const VERSION = "2024.08.12"
+const VERSION = "2024.08.31"

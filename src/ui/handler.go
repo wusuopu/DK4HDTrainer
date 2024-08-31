@@ -24,6 +24,7 @@ var jsFuncMaps = map[string]jsFunc{
 	"listShip": 				listShip,
 	"listPort": 				listPort,
 	"addMoney":					addMoney,
+	"minusOrgMoney":		minusOrgMoney,
 	"enhanceSeaman":		enhanceSeaman,
 	"enhanceShip":			enhanceShip,
 	"turnOnAllPorts":		turnOnAllPorts,
@@ -176,6 +177,24 @@ func addMoney(payload string) string {
 
 	currentOrg.GetOrganizationById(t, uint64(currentOrg.Id))
 	currentOrg.SetMoney(t, currentOrg.Money + 10000)
+
+	resp := makeResponse(200)
+	return formatResponse(&resp)
+}
+func minusOrgMoney(payload string) string {
+	if currentOrg == nil {
+		return makeErrorResponse("", 400)
+	}
+
+	data, _ := fastjson.Parse(payload)
+	id, err := utils.GetJSONInt64(data, "id")
+	if err != nil {
+		return makeErrorResponse("", 400)
+	}
+
+	org := &trainer.Organization{}
+	org.GetOrganizationById(t, uint64(id))
+	org.SetMoney(t, 5000)
 
 	resp := makeResponse(200)
 	return formatResponse(&resp)
